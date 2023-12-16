@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <h2> Descargador PDF de Jornadas Diarias </h2>
+    <label for='year'> Año: </label><input type='number' id='year' min='2020' max='2030' value='2023'
+        onkeydown='return false' /> <br><br>
+    <label for='month'> Mes: </label><input type='number' id='month' min='1' max='12' value='1'
+        onkeydown='return false' /> <br><br>
+
+    <button onclick='download_pdf("SV")'> <i id="SV" class='button'></i> Descargar San Vicente </button> <br><br>
+    <button onclick='download_pdf("SUSHI")'> <i id="SUSHI" class='button'></i> Descargar Sushi </button><br><br>
+
+    <p id='output'> </p>
+</body>
+
+<script>
+    function download_pdf(company) {
+        const year = document.querySelector("#year").value
+        const month = document.querySelector("#month").value
+
+        const button = document.getElementById(company)
+        const output = document.getElementById('output')
+
+        if (button.classList.contains('fa')) return // indicates the pdf is currently being generated. If so, exit.
+
+        init(button)
+        output.innerHTML = `Descargando. Espera...`
+        output.classList.remove('red-font', 'green-font')
+
+        google.script.run
+            .withSuccessHandler(({ data, filename }) => {
+                if (data) {
+                    const temp = document.createElement("a")
+                    document.body.appendChild(temp)
+                    temp.download = filename
+                    temp.href = data
+                    temp.click()
+                }
+                finish(button)
+                output.innerHTML = `Jornada de ${company} para ${year}-${month} descargada.`
+                output.classList.remove('red-font')
+                output.classList.add('green-font')
+            })
+            .withFailureHandler(e => {
+                finish(button)
+                output.innerHTML = `
+          Descarga fallada para ${company} para ${year}-${month}. <br><br> 
+          Razon: ${e.message}
+          `
+                output.classList.remove('green-font')
+                output.classList.add('red-font')
+            })
+            .dl_pdf(company, year, month)
+    }
+
+    function init(button) {
+        button.classList.add('fa', 'fa-spinner', 'fa-spin')
+    }
+
+    function finish(button) {
+        button.classList.remove('fa', 'fa-spinner', 'fa-spin')
+    }
+
+
+</script>
+
+<style>
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        opacity: 1;
+    }
+
+    button {
+        background-color: #4CAF50;
+        /* Green */
+        border: none;
+        color: white;
+        padding: 12px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 20px;
+    }
+
+    h2 {
+        font-size: 25px;
+    }
+
+    label {
+        font-size: 20px;
+    }
+
+    input {
+        font-size: 20px;
+        width: 90%;
+    }
+
+    .green-font {
+        color: green
+    }
+
+    .red-font {
+        color: red;
+    }
+</style>
+
+</html>
