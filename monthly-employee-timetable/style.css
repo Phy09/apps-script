@@ -1,0 +1,37 @@
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    opacity: 1;
+}
+
+button {
+    background-color: #4CAF50;
+    /* Green */
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+}
+
+h2 {
+    font-size: 25px;
+}
+
+label {
+    font-size: 20px;
+}
+
+input {
+    font-size: 20px;
+    width: 90%;
+}
+
+.green-font {
+    color: green
+}
+
+.red-font {
+    color: red;
+}
